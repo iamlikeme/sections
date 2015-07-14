@@ -20,6 +20,10 @@ class Dimensions(object):
             setattr(self, name, value)
     
     
+    def to_dict(self):
+        return {name:getattr(self, name) for name in self.__dimensions}
+    
+    
     def __convert_dimension(self, value):
         if isinstance(value, int):
             value = float(value)
