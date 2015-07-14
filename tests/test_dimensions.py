@@ -66,5 +66,10 @@ class DimensionsTests(unittest.TestCase):
         self.assertRaises(AttributeError, dims.update, a=5.0, d=4.0)
         self.assertEqual(dims.a, 1.0)
         
+
+    def test_to_dict(self):
+        kwargs = {"a":1.0, "b":2.0}
+        dims = Dimensions(**kwargs)
         
+        self.assertDictEqual(kwargs, dims.to_dict())
         
