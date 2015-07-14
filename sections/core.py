@@ -115,7 +115,19 @@ class VertexArray(object):
         if value is not None:
             value = self.__convert_to_vertex(value)
         self.__vertices[index] = value
-        
+    
+    
+    def __setslice__(self, i, j, value):
+        vertices = self.__vertices[:]
+        vertices.__setslice__(i, j, value)
+        vertices = [self.__convert_to_vertex(v) for v in vertices]
+        if len(vertices) != self.n:
+            raise ValueError("It is not allowed to change the number of vertices by slicing")
+        else:
+            self.__vertices = vertices
+            
+                
+    
     
     def __repr__(self):
         return repr(self.__vertices)
