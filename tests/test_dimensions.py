@@ -12,9 +12,10 @@ class DimensionsTests(unittest.TestCase):
 
 
     def test_creates_attributes_from_keywords_to_init(self):
-        dims = Dimensions(some_attribute=1)
+        dims = Dimensions(some_attribute=1.0)
         
         self.assertTrue(hasattr(dims, "some_attribute"))
+        self.assertEqual(dims.some_attribute, 1.0)
 
 
     def test_does_not_allow_to_set_new_attributes(self):
@@ -51,6 +52,19 @@ class DimensionsTests(unittest.TestCase):
         self.assertIsInstance(dims.b, float)
     
     
+    def test_update_multiple_dimensions(self):
+        dims = Dimensions(a=5.0, b=6.0, c=3.0)
+        dims.update(a=1.0, b=2.0)
+        
+        self.assertEqual(dims.a, 1.0)
+        self.assertEqual(dims.b, 2.0)
+        self.assertEqual(dims.c, 3.0)
+
+        self.assertRaises(TypeError, dims.update, a=5.0, b="text")
+        self.assertEqual(dims.a, 1.0) 
+        
+        self.assertRaises(AttributeError, dims.update, a=5.0, d=4.0)
+        self.assertEqual(dims.a, 1.0)
         
         
         
