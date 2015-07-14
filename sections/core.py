@@ -76,10 +76,10 @@ class VertexArray(object):
     
     @n.setter
     def n(self, value):
-        if not isinstance(value, int):
+        if isinstance(value, int):
+            delta = value - self.n
+        else:
             raise TypeError("n must be an int, got %s" %value)
-        
-        delta = value - self.n
         
         if delta >= 0:
             self.__vertices += [None] * delta
@@ -91,10 +91,10 @@ class VertexArray(object):
         try:
             x, y = value
         except ValueError:
-            raise TypeError("Cannot set vertex to '%r'" %value)
+            raise TypeError("Cannot set vertex to %r" %value)
         
         if type(x) not in (float, int) or type(y) not in (float, int):
-            raise TypeError("Vertex coordinates must be two numbers, got '%r' and '%r'" %(x,y))
+            raise TypeError("Vertex coordinates must be two numbers, got %r and %r" %(x,y))
         
         return float(x), float(y)
         
@@ -125,9 +125,7 @@ class VertexArray(object):
             raise ValueError("It is not allowed to change the number of vertices by slicing")
         else:
             self.__vertices = vertices
-            
-                
     
     
     def __repr__(self):
-        return repr(self.__vertices)
+        return "VertexArray%s" %repr(self.__vertices)
