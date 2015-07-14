@@ -55,3 +55,7 @@ class Dimensions(object):
             raise ValueError("Dimension '%s' is not set" %name)
         else:
             return value
+    
+
+    def __repr__(self):
+        return "Dimensions%s" %self.to_dict()
