@@ -78,7 +78,13 @@ class VertexArray(object):
     def n(self, value):
         if not isinstance(value, int):
             raise TypeError("n must be an int, got %s" %value)
-        self.__vertices = [None] * value
+        
+        delta = value - self.n
+        
+        if delta >= 0:
+            self.__vertices += [None] * delta
+        else:
+            self.__vertices = self.__vertices[:value]
     
     
     def __convert_to_vertex(self, value):
