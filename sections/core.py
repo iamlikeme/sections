@@ -10,17 +10,22 @@ class Dimensions(object):
             self.__dimensions.append(key)
             setattr(self, key, value)
     
-
-    def __setattr__(self, name, value):
-        if name not in self.__dimensions:
-            raise AttributeError("Cannot set attribute %s" %name)
-        elif isinstance(value, int):
+    
+    def __convert_dimension(self, value):
+        if isinstance(value, int):
             value = float(value)
         elif isinstance(value, (float, type(None))):
             pass
         else:
             raise TypeError("Cannot set dimension to value of type %s" %type(value))
+        return value
+    
+
+    def __setattr__(self, name, value):
+        if name not in self.__dimensions:
+            raise AttributeError("Cannot set attribute %s" %name)
         
+        value = self.__convert_dimension(value)
         object.__setattr__(self, name, value)
     
 
