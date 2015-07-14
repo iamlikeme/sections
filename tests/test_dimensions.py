@@ -68,8 +68,7 @@ class DimensionsTests(unittest.TestCase):
         
 
     def test_to_dict(self):
-        kwargs = {"a":1.0, "b":2.0}
+        kwargs = {"a":1.0, "b":None}
         dims = Dimensions(**kwargs)
         
         self.assertDictEqual(kwargs, dims.to_dict())
-        
