@@ -69,6 +69,12 @@ class VertexArray(object):
         self.n = n
     
     
+    def copy(self):
+        va = self.__class__(self.n)
+        va[:] = self[:]
+        return va
+        
+    
     @property
     def n(self):
         return len(self)
