@@ -59,3 +59,57 @@ class Dimensions(object):
 
     def __repr__(self):
         return "Dimensions%s" %self.to_dict()
+        
+
+
+class VertexArray(object):
+    
+    def __init__(self, n=0):
+        self.__vertices = []
+        self.n = n
+    
+    
+    @property
+    def n(self):
+        return len(self)
+    
+    
+    @n.setter
+    def n(self, value):
+        if not isinstance(value, int):
+            raise TypeError("n must be an int, got %s" %value)
+        self.__vertices = [None] * value
+    
+    
+    def __convert_to_vertex(self, value):
+        try:
+            x, y = value
+        except ValueError:
+            raise TypeError("Cannot set vertex to '%r'" %value)
+        
+        if type(x) not in (float, int) or type(y) not in (float, int):
+            raise TypeError("Vertex coordinates must be two numbers, got '%r' and '%r'" %(x,y))
+        
+        return float(x), float(y)
+        
+    
+    def __len__(self):
+        return len(self.__vertices)
+    
+    
+    def __getitem__(self, index):
+        vertex = self.__vertices[index]
+        if vertex is None:
+            raise ValueError("Vertex %i is not set" %index)
+        return vertex
+    
+    
+    def __setitem__(self, index, value):
+        self.__vertices[index]  # Check if index is within range
+        if value is not None:
+            value = self.__convert_to_vertex(value)
+        self.__vertices[index] = value
+        
+    
+    def __repr__(self):
+        return repr(self.__vertices)
