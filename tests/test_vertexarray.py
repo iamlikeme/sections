@@ -3,6 +3,7 @@ from operator import setitem, getitem
 
 from sections.core import VertexArray
 
+
 class TestVertexArray(unittest.TestCase):
 
     def test_set_number_of_vertices(self):
@@ -50,4 +51,30 @@ class TestVertexArray(unittest.TestCase):
         va[0] = None
         
         self.assertRaises(ValueError, getitem, va, 0)
+    
+    
+    def test_resizing(self):
+        va1 = VertexArray()
+        va1.n = 1
+        
+        va2 = VertexArray(1)
+        va2[0] = 1.0, 2.0
+        va2.n  = 2
+        
+        va3 = VertexArray(2)
+        va3[0] = 1.0, 2.0
+        va3[1] = 3.0, 4.0
+        va3.n  = 1
+        
+        self.assertEqual(len(va1), 1)
+        self.assertRaises(ValueError, getitem, va1, 0)  # The added vertex should be unset
+        
+        self.assertEqual(len(va2), 2)
+        self.assertTupleEqual(va2[0], (1.0, 2.0))
+        self.assertRaises(ValueError, getitem, va2, 1)
+        
+        self.assertEqual(len(va3), 1)
+        self.assertTupleEqual(va3[0], (1.0, 2.0))
+
+        
 
