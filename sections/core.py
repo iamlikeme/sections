@@ -21,7 +21,11 @@ class Dimensions(object):
     
     
     def to_dict(self):
-        return {name:getattr(self, name) for name in self.__dimensions}
+        return {name:object.__getattribute__(self, name) for name in self.__dimensions}
+    
+
+    def copy(self):
+        return Dimensions(**self.to_dict())
     
     
     def __convert_dimension(self, value):
