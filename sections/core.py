@@ -11,6 +11,15 @@ class Dimensions(object):
             setattr(self, key, value)
     
     
+    def update(self, **kwargs):
+        for name, value in kwargs.items():
+            self.__convert_dimension(value)
+            if name not in self.__dimensions:
+                setattr(self, name, value)
+        for name, value in kwargs.items():
+            setattr(self, name, value)
+    
+    
     def __convert_dimension(self, value):
         if isinstance(value, int):
             value = float(value)
