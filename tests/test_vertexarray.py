@@ -1,5 +1,5 @@
 import unittest
-from operator import setitem, getitem
+from operator import setitem, getitem, setslice, getslice
 
 from sections.core import VertexArray
 
@@ -77,4 +77,30 @@ class TestVertexArray(unittest.TestCase):
         self.assertTupleEqual(va3[0], (1.0, 2.0))
 
         
+    def test_getslice(self):
+        vertices = [(1.0, 2.0), (3.0, 4.0), (5.0, 6.0)]
+        va = VertexArray(3)
+        va[:] = vertices
+        
+        self.assertListEqual(va[1:], vertices[1:])
+        self.assertListEqual(va[:-1], vertices[:-1])
+        self.assertListEqual(va[-1::], vertices[-1::])
+    
+    
+    def test_setslice(self):
+        # Using two lists of vertices - one with ints and one with floats
+        # This is to check that all numbers are converted to floats when setting a slice
+        _vertices = [(1, 2), (3, 4)]
+        vertices  = [(1.0, 2.0), (3.0, 4.0)]
+        va1 = VertexArray(1)
+        va2 = VertexArray(2)
+        va2[:] = _vertices
+        
+        # Do not allow to change array length
+        self.assertRaises(ValueError, setslice, va1, 0, 1, vertices)
+        self.assertRaises(ValueError, setslice, va2, 0, 2, vertices[:1])
+
+        self.assertEqual(va2[0], vertices[0])
+        self.assertEqual(va2[1], vertices[1])
+        self.assertIsInstance(va2[0][0], float)
 
