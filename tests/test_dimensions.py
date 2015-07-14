@@ -72,3 +72,11 @@ class DimensionsTests(unittest.TestCase):
         dims = Dimensions(**kwargs)
         
         self.assertDictEqual(kwargs, dims.to_dict())
+    
+    
+    def test_copy(self):
+        dims1 = Dimensions(a=1, b=None)
+        dims2 = dims1.copy()
+        
+        self.assertDictEqual(dims1.to_dict(), dims2.to_dict())
+        
