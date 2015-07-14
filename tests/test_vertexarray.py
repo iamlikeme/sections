@@ -104,3 +104,12 @@ class TestVertexArray(unittest.TestCase):
         self.assertEqual(va2[1], vertices[1])
         self.assertIsInstance(va2[0][0], float)
 
+
+    def test_copy(self):
+        va1 = VertexArray(2)
+        va1[:] = (1,2), (3,4)
+        va2 = va1.copy()
+        
+        self.assertIsInstance(va2, va1.__class__)
+        self.assertListEqual(va1[:], va2[:])
+
