@@ -21,3 +21,9 @@ class CircularSectorTests(unittest.TestCase, SectionTests):
     
     def scaled_dimensions(self, factor):
     	return {"ro":factor*self.ro, "ri":factor*self.ri}
+
+
+class CircularSectorTests2(unittest.TestCase):
+    
+    def test_todo(self):
+        self.fail("TODO: Add tests for circular sector with ri>0")
