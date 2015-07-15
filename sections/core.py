@@ -215,8 +215,8 @@ class BaseSection(object):
         x, y = float(x), float(y)       
 
         x0, y0, theta = self.position
-        s = sin(-theta)
-        c = cos(-theta)
+        s = sin(theta)
+        c = cos(theta)
 
         x_ = x0 + x*c - y*s
         y_ = y0 + x*s + y*c
