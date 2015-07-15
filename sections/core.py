@@ -236,11 +236,23 @@ class BaseSection(object):
             raise TypeError("vector_or_matrix must be a sequence of 2 or 3 elements, got %s" %repr(vector_or_matrix))
 
 
+    def parallel_axis(self, I, cog, reverse=False):
+        A = self.A
+        _I11, _I22, _I12 = I
+        e1, e2 = cog
+        if reverse:
+            e1, e2 = -e1, -e2
+        I11 = _I11 + A*e2*e2
+        I22 = _I22 + A*e1*e1
+        I12 = _I12 + A*e1*e2
+        return I11, I22, I12
+
+
     # Physical properties of the section
     # ==================================
     
     # Naming conventions for physical properties:
-    # * names starting with undescore refer to properties in the reference csys
+    # * names starting with undescore refer to properties in the local csys
     # * names ending with zero refer to properties in a csys translated to the cog
 
     # Physical properties to be implemented in a subclass
@@ -248,16 +260,22 @@ class BaseSection(object):
     
     @property
     def _cog(self):
+        """
+        Position of the centre of gravity in the local csys."""
         raise NotImplementedError
     
 
     @property
     def A(self):
+        """
+        Surface area (mass)"""
         raise NotImplementedError
     
     
     @property
     def _I0(self):
+        """
+        Moments of inertia (I11, I22, I12) in the local csys translated to the cog."""
         raise NotImplementedError
     
     
@@ -266,21 +284,29 @@ class BaseSection(object):
     
     @property
     def cog(self):
+        """
+        Position of the centre of gravity in the global csys."""
         return self.transform_to_global(self._cog)
 
     
     @property
     def I0(self):
+        """
+        Moment of inertia (I11, I22, I12) in the global csys translated to the cog."""
         pass
     
     
     @property
     def _I(self):
-        pass
+        """
+        Moments of inertia (I11, I22, I12) in the local csys."""
+        return self.parallel_axis(self._I0, self._cog)
     
     
     @property
     def I(self):
+        """
+        Moments of inertia (I11, I22, I12) in the global csys."""
         pass
 
 
