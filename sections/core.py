@@ -210,19 +210,25 @@ class BaseSection(object):
         self.__position = tuple(position)
     
     
-    def transform_to_global(self, vector):
-        x, y = vector
-        x, y = float(x), float(y)       
-
+    def transform_to_global(self, vector_or_matrix):
         x0, y0, theta = self.position
         s = sin(theta)
         c = cos(theta)
-
-        x_ = x0 + x*c - y*s
-        y_ = y0 + x*s + y*c
-                
-        return x_, y_
         
+        data = tuple(vector_or_matrix)
+        if len(data) == 2:
+            x, y = [float(v) for v in data]
+            x_ = x0 + x*c - y*s
+            y_ = y0 + x*s + y*c
+            return x_, y_
+        elif len(data) == 3:
+            xx, yy, xy = [float(v) for v in data]
+            xx_ = c*c * xx - 2*s*c * xy + s*s * yy
+            yy_ = s*s * xx + 2*s*c * xy + c*c * yy
+            xy_ = (c*c - s*s) * xy + s*c * (xx - yy)
+            return xx_, yy_, xy_
+        else:
+            raise TypeError("vector_or_matrix must be a sequence of 2 or 3 elements, got %s" %repr(vector_or_matrix))
         
         
 
