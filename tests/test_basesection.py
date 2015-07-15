@@ -148,6 +148,29 @@ class BaseSectionTests(unittest.TestCase):
         self.assertAlmostEqual(section.transform_to_global(m2)[1], 1.0)
         self.assertAlmostEqual(section.transform_to_global(m2)[2], -3.0)
 
-        
-        
     
+    def test_centre_of_gravity(self):
+        _cog = (2.0, 3.0)
+        class Dummy(BaseSection):
+            @property
+            def _cog(self):
+                return _cog
+        section = Dummy()
+        
+        self.assertEqual(section._cog, section.cog)
+        
+        section.set_position(d1=5.0, d2=0.0, theta=0.0)
+        self.assertEqual(section.cog, (7.0, 3.0))
+        
+        section.set_position(d1=0.0, d2=5.0, theta=0.0)
+        self.assertEqual(section.cog, (2.0, 8.0))
+        
+        section.set_position(d1=0.0, d2=0.0, theta=pi/2)
+        self.assertAlmostEqual(section.cog[0], -_cog[1])
+        self.assertAlmostEqual(section.cog[1], _cog[0])
+
+        cog = section.cog
+        section.set_density(2)
+        self.assertEqual(section.cog, cog)
+    
+
