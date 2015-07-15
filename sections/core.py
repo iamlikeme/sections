@@ -241,10 +241,12 @@ class BaseSection(object):
         _I11, _I22, _I12 = I
         e1, e2 = cog
         if reverse:
-            e1, e2 = -e1, -e2
-        I11 = _I11 + A*e2*e2
-        I22 = _I22 + A*e1*e1
-        I12 = _I12 + A*e1*e2
+            f = -1.0
+        else:
+            f = 1.0
+        I11 = _I11 + f*A*e2*e2
+        I22 = _I22 + f*A*e1*e1
+        I12 = _I12 + f*A*e1*e2
         return I11, I22, I12
 
 
