@@ -229,6 +229,14 @@ class BaseSection(object):
             return xx_, yy_, xy_
         else:
             raise TypeError("vector_or_matrix must be a sequence of 2 or 3 elements, got %s" %repr(vector_or_matrix))
-        
-        
+
+    
+    @property
+    def _cog(self):
+        raise NotImplementedError
+    
+    
+    @property
+    def cog(self):
+        return self.transform_to_global(self._cog)
 
