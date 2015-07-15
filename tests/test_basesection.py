@@ -110,13 +110,18 @@ class BaseSectionTests(unittest.TestCase):
         self.assertEqual(section.transform_to_global(v2), (0.0, -3.0))
         
         section.set_position(d1=0.0, d2=0.0, theta=pi/2)
-        self.assertAlmostEqual(section.transform_to_global(v1)[0], 3.0)
-        self.assertAlmostEqual(section.transform_to_global(v1)[1], -2.0)
+        self.assertAlmostEqual(section.transform_to_global(v1)[0], -3.0)
+        self.assertAlmostEqual(section.transform_to_global(v1)[1], 2.0)
         self.assertAlmostEqual(section.transform_to_global(v2)[0], 0.0)
         self.assertAlmostEqual(section.transform_to_global(v2)[1], 0.0)
-
+        
+        section.set_position(d1=3.0, d2=-2.0, theta=pi/2)
+        self.assertAlmostEqual(section.transform_to_global(v1)[0], 0.0)
+        self.assertAlmostEqual(section.transform_to_global(v1)[1], 0.0)
+        self.assertAlmostEqual(section.transform_to_global(v2)[0], 3.0)
+        self.assertAlmostEqual(section.transform_to_global(v2)[1], -2.0)
+        
     
     
     def test_matrix_transformation(self):
         pass
-    
