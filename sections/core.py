@@ -293,7 +293,7 @@ class BaseSection(object):
     def I0(self):
         """
         Moment of inertia (I11, I22, I12) in the global csys translated to the cog."""
-        pass
+        return self.transform_to_global(self._I0)
     
     
     @property
@@ -307,7 +307,7 @@ class BaseSection(object):
     def I(self):
         """
         Moments of inertia (I11, I22, I12) in the global csys."""
-        pass
+        return self.parallel_axis(self.I0, self.cog)
 
 
 class SimpleSection(BaseSection):
