@@ -10,9 +10,8 @@ class RectangleTests(unittest.TestCase, SectionTests):
         self.b          = 3.0
         self.cls        = Rectangle
         self.dimensions = {"a":self.a, "b":self.b}
-        self.rp         = 0.5*self.b, 0.5*self.a
-        self.A          = self.a * self.b
-        self._I0        = self.a * self.b**3 / 12., \
-                          self.b * self.a**3 / 12., \
-                          0.0
+        self.rp         = 5.0, 4.0
+        self.A          = 6.0
+        self._I0        = 4.5, 2.0, 0.0
+        self._I         = self._I0
         self._cog       = 0.0, 0.0

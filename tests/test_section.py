@@ -9,16 +9,9 @@ class SectionTests(object):
     rp         = NotImplemented  # Position of the reference point
     A          = NotImplemented  # Surface area
     _I0        = NotImplemented  # Moments of inertia in local csys moved to cog
+    _I         = NotImplemented  # Moments of inertia in local csys
     _cog       = NotImplemented  # Position of the cog in local csys
-    
-    
-    @property
-    def _I(self):
-        I11 = self._I0[0] + self.A * self._cog[1]**2
-        I22 = self._I0[1] + self.A * self._cog[0]**2
-        I12 = self._I0[2] + self.A * self._cog[0] * self._cog[1]
-        return I11, I22, I12
-    
+        
     
     def get_section(self, density=1.0):
         kwargs = {"density" : density}
