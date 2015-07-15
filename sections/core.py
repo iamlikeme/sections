@@ -1,4 +1,5 @@
 from operator import attrgetter
+from math import sin, cos
 
 class cached_property(object):
     """ A property that is only computed once per instance and then replaces
@@ -207,7 +208,21 @@ class BaseSection(object):
         if theta is not None:
             position[2] = float(theta)
         self.__position = tuple(position)
+    
+    
+    def transform_to_global(self, vector):
+        x, y = vector
+        x, y = float(x), float(y)       
+
+        x0, y0, theta = self.position
+        s = sin(-theta)
+        c = cos(-theta)
+
+        x_ = x0 + x*c - y*s
+        y_ = y0 + x*s + y*c
+                
+        return x_, y_
         
         
         
-        
+
