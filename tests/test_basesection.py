@@ -123,5 +123,31 @@ class BaseSectionTests(unittest.TestCase):
         
     
     
-    def test_matrix_transformation(self):
-        pass
+    def test_symmetric_matrix_transformation(self):
+        # Symmetric matrix is defined by (m11, m22, m12)
+        # Position of the origin should have no influence on matrix components
+        # Transformation should only depend on rotation of the section 
+
+        section = BaseSection()
+        m1 = (1.0, 1.0, 0.0)
+        m2 = (1.0, 2.0, 3.0)
+
+        section.set_position(d1=2.0, d2=0.0, theta=0.0)
+        self.assertEqual(section.transform_to_global(m1), m1)
+        self.assertEqual(section.transform_to_global(m2), m2)
+        
+        section.set_position(d1=0.0, d2=3.0, theta=0.0)
+        self.assertEqual(section.transform_to_global(m1), m1)
+        self.assertEqual(section.transform_to_global(m2), m2)
+        
+        section.set_position(d1=0.0, d2=0.0, theta=pi/2)
+        self.assertAlmostEqual(section.transform_to_global(m1)[0], 1.0)
+        self.assertAlmostEqual(section.transform_to_global(m1)[1], 1.0)
+        self.assertAlmostEqual(section.transform_to_global(m1)[2], 0.0)
+        self.assertAlmostEqual(section.transform_to_global(m2)[0], 2.0)
+        self.assertAlmostEqual(section.transform_to_global(m2)[1], 1.0)
+        self.assertAlmostEqual(section.transform_to_global(m2)[2], -3.0)
+
+        
+        
+    
