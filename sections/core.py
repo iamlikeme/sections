@@ -1,3 +1,5 @@
+from operator import attrgetter
+
 class cached_property(object):
     """ A property that is only computed once per instance and then replaces
         itself with an ordinary attribute. Deleting the attribute resets the
@@ -152,3 +154,60 @@ class VertexArray(object):
     
     def __repr__(self):
         return "VertexArray%s" %repr(self.__vertices)
+
+
+class SectionType(type):
+    
+    def __init__(cls, *args, **kwargs):
+        for name in cls.dimensions.to_dict():
+            setattr(cls, name, property(attrgetter("dimensions.%s" %name)))
+
+
+class BaseSection(object):
+    __metaclass__ = SectionType
+    dimensions = Dimensions()
+    
+    def __init__(self, **kwargs):
+        self.__density  = None
+        self.__position = (0.0, 0.0, 0.0)
+        self.dimensions = self.__class__.dimensions.copy()
+        
+        self.set_density(kwargs.pop("density", 1.0))
+        self.set_dimensions(**kwargs)
+        
+    
+    @property
+    def density(self):
+        return self.__density
+    
+    
+    @property
+    def position(self):
+        return self.__position
+    
+    
+    def set_density(self, value):
+        value = float(value)
+        if value:
+            self.__density = float(value)
+        else:
+            raise ValueError("Cannot set density to zero")
+    
+
+    def set_dimensions(self, **kwargs):
+        self.dimensions.update(**kwargs)
+    
+    
+    def set_position(self, d1=None, d2=None, theta=None):
+        position = list(self.__position)
+        if d1 is not None:
+            position[0] = float(d1)
+        if d2 is not None:
+            position[1] = float(d2)
+        if theta is not None:
+            position[2] = float(theta)
+        self.__position = tuple(position)
+        
+        
+        
+        
