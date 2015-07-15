@@ -175,7 +175,11 @@ class BaseSection(object):
         
         self.set_density(kwargs.pop("density", 1.0))
         self.set_dimensions(**kwargs)
-        
+
+
+    # Setters and getters for attributes that affect the physical
+    # properties of the section: density, dimensions, position
+    # ===========================================================        
     
     @property
     def density(self):
@@ -208,7 +212,8 @@ class BaseSection(object):
         if theta is not None:
             position[2] = float(theta)
         self.__position = tuple(position)
-    
+
+    # ===========================================================            
     
     def transform_to_global(self, vector_or_matrix):
         x0, y0, theta = self.position
@@ -230,13 +235,60 @@ class BaseSection(object):
         else:
             raise TypeError("vector_or_matrix must be a sequence of 2 or 3 elements, got %s" %repr(vector_or_matrix))
 
+
+    # Physical properties of the section
+    # ==================================
+    
+    # Naming conventions for physical properties:
+    # * names starting with undescore refer to properties in the reference csys
+    # * names ending with zero refer to properties in a csys translated to the cog
+
+    # Physical properties to be implemented in a subclass
+    # ---------------------------------------------------
     
     @property
     def _cog(self):
         raise NotImplementedError
     
+
+    @property
+    def A(self):
+        raise NotImplementedError
+    
+    
+    @property
+    def _I0(self):
+        raise NotImplementedError
+    
+    
+    # Other physical properties
+    # ---------------------------------------------------
     
     @property
     def cog(self):
         return self.transform_to_global(self._cog)
+
+    
+    @property
+    def I0(self):
+        pass
+    
+    
+    @property
+    def _I(self):
+        pass
+    
+    
+    @property
+    def I(self):
+        pass
+
+
+class SimpleSection(BaseSection):
+    pass
+
+
+class ComplexSection(BaseSection):
+    pass
+    
 
