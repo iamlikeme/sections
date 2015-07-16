@@ -1,6 +1,6 @@
 from math import sin, cos, pi
 
-from core import SimpleSection, Dimensions
+from core import SimpleSection, ComplexSection, Dimensions
 
 # ==============================================================================
 # S I M P L E   S E C T I O N S
@@ -63,4 +63,19 @@ class CircularSector(SimpleSection):
         _I22 = self.density * 0.125 * (ro**4 - ri**4) * (phi + sin(phi))
         _I12 = self.density * 0.0
         return self.parallel_axis((_I11, _I22, _I12), self._cog, reverse=True)
+
+
+
+# ==============================================================================
+# C O M P L E X   S E C T I O N S
+# ==============================================================================
+
+class Circle(ComplexSection):
+    dimensions = Dimensions(r=None)
+    sections   = [CircularSector]
+    
+    
+    def update_sections(self):
+        self.sections[0].set_dimensions(ri=0, ro=self.r, phi=2*pi)
+    
 
