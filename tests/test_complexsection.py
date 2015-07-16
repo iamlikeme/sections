@@ -1,6 +1,6 @@
 import unittest
 
-from sections.core import ComplexSection, SimpleSection, Dimensions
+from sections.core import ComplexSection, SimpleSection, Dimensions, cached_property
 
 
 class ComplexSectionTests(unittest.TestCase):
@@ -78,6 +78,29 @@ class ComplexSectionTests(unittest.TestCase):
         self.assertEqual(section.sections[1].density,  6.0)
 
 
+    def test_cached_properties(self):
+        self.assertTrue(isinstance(ComplexSection._cog, cached_property))
+        self.assertTrue(isinstance(ComplexSection.cog, cached_property))
+        self.assertTrue(isinstance(ComplexSection.A, cached_property))
+        self.assertTrue(isinstance(ComplexSection._I0, cached_property))
+        self.assertTrue(isinstance(ComplexSection._I, cached_property))
+        self.assertTrue(isinstance(ComplexSection.I0, cached_property))
+        self.assertTrue(isinstance(ComplexSection.I, cached_property))
         
+
+    def test_reset_cached_properties(self):
+        # BaseSection.reset_cached_properties should be called when changing
+        # dimensions, density or position
         
-        
+        # It should be also checked that cached properties are deleted by
+        # reset_cached_properties. This is checked only for subclasses
+
+        def error_raiser():
+            raise ValueError
+        section = self.ComplexSection()
+        section.reset_cached_properties = error_raiser
+    	
+    	self.assertRaises(ValueError, section.set_dimensions)
+    	self.assertRaises(ValueError, section.set_density, 2)
+    	self.assertRaises(ValueError, section.set_position, 1, 2, 3)
+

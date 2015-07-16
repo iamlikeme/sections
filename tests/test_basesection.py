@@ -1,7 +1,7 @@
 import unittest
 from math import pi
 
-from sections.core import BaseSection, Dimensions
+from sections.core import BaseSection, Dimensions, cached_property
 
 
 class BaseSectionTests(unittest.TestCase):
@@ -104,7 +104,34 @@ class BaseSectionTests(unittest.TestCase):
             
         self.assertRaises(ValueError, section.set_dimensions)    	
 
+
+    def test_cached_properties(self):
+        self.assertTrue(isinstance(BaseSection._cog, cached_property))
+        self.assertTrue(isinstance(BaseSection.cog, cached_property))
+        self.assertTrue(isinstance(BaseSection.A, cached_property))
+        self.assertTrue(isinstance(BaseSection._I0, cached_property))
+        self.assertTrue(isinstance(BaseSection._I, cached_property))
+        self.assertTrue(isinstance(BaseSection.I0, cached_property))
+        self.assertTrue(isinstance(BaseSection.I, cached_property))        
+
     
+    def test_reset_cached_properties(self):
+        # BaseSection.reset_cached_properties should be called when changing
+        # dimensions, density or position
+        
+        # It should be also checked that cached properties are deleted by
+        # reset_cached_properties. This is checked only for subclasses
+
+        def error_raiser():
+            raise ValueError
+        section = BaseSection()
+        section.reset_cached_properties = error_raiser
+    	
+    	self.assertRaises(ValueError, section.set_dimensions)
+    	self.assertRaises(ValueError, section.set_density, 2)
+    	self.assertRaises(ValueError, section.set_position, 1, 2, 3)
+
+
     def test_vector_transformation(self):
         section = BaseSection()
         v1 = (2.0, 3.0)
