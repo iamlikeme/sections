@@ -174,7 +174,15 @@ class BaseSection(object):
         self.dimensions = self.__class__.dimensions.copy()
         
         self.set_density(kwargs.pop("density", 1.0))
-        self.set_dimensions(**kwargs)
+        
+        dimensions = self.dimensions.to_dict()
+        dimensions.update(kwargs)
+        fully_defined = all(dim is not None for dim in dimensions.values())
+        
+        if fully_defined:        
+            self.set_dimensions(**dimensions)
+        else:
+            self.dimensions.update(**dimensions)
 
 
     # Setters and getters for attributes that affect the physical
@@ -317,6 +325,68 @@ class SimpleSection(BaseSection):
 
 
 class ComplexSection(BaseSection):
-    pass
     
+    sections  = NotImplemented
+    densities = NotImplemented
+
+    def update_sections(self):
+        raise NotImplementedError
+
+
+    def __init__(self, **kwargs):
+        self.sections = [cls() for cls in self.__class__.sections]
+    
+        if self.densities is NotImplemented:
+            self.densities = [1.0 for s in self.sections]
+        else:
+            self.densities = [float(d) for d in self.densities]
+        
+        if len(self.densities) != len(self.sections):
+            raise ValueError("The numbers of sections and densities do not match")
+        
+        super(ComplexSection, self).__init__(**kwargs)
+    
+    
+    def set_density(self, value):
+        super(ComplexSection, self).set_density(value)
+        for section, density in zip(self.sections, self.densities):
+            section.set_density(value*density)
+            
+
+    def set_dimensions(self, **kwargs):
+        super(ComplexSection, self).set_dimensions(**kwargs)
+        self.update_sections()
+    
+    
+    # Physical properties to be implemented in a subclass
+    # ---------------------------------------------------
+    @property
+    def _cog(self):
+        """
+        Position of the centre of gravity in the local csys."""
+        S1 = sum(section.A * section.cog[1] for section in self.sections)
+        S2 = sum(section.A * section.cog[0] for section in self.sections)
+        _e1 = S2 / self.A
+        _e2 = S1 / self.A
+        return _e1, _e2
+    
+
+    @property
+    def A(self):
+        """
+        Surface area (mass)"""
+        return sum(section.A for section in self.sections)
+    
+    
+    @property
+    def _I0(self):
+        """
+        Moments of inertia (I11, I22, I12) in the local csys translated to the cog."""
+        I11 = sum(section.I[0] for section in self.sections)
+        I22 = sum(section.I[1] for section in self.sections)
+        I12 = sum(section.I[2] for section in self.sections)
+        return self.parallel_axis((I11, I22, I12), self._cog, reverse=True)
+        
+        
+        
 
