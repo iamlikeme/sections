@@ -14,3 +14,10 @@ class CircleTests(unittest.TestCase, SectionTests):
         self._I0        = 63.61725123519331, 63.61725123519331, 0.0
         self._I         = self._I0
         self._cog       = 0.0, 0.0
+    
+    
+    def test_check_dimensions(self):
+    	circle = Circle(r=1)
+    	
+    	self.assertRaises(ValueError, circle.set_dimensions, r=-1)
+    	self.assertRaises(ValueError, circle.set_dimensions, r=0)
