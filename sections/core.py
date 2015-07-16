@@ -208,6 +208,10 @@ class BaseSection(object):
     
 
     def set_dimensions(self, **kwargs):
+        dims = self.dimensions.copy()
+        dims.update(**kwargs)
+        self.check_dimensions(dims)
+        
         self.dimensions.update(**kwargs)
     
     
@@ -221,7 +225,15 @@ class BaseSection(object):
             position[2] = float(theta)
         self.__position = tuple(position)
 
-    # ===========================================================            
+    # ===========================================================
+    
+    def check_dimensions(self, dims):
+        """
+        This function is called by set_dimensions before section dimensions
+        are updated. The function should raise a ValueError if *dims* (a Dimensions
+        object) is an invalid combination of dimensions."""
+        pass
+        
     
     def transform_to_global(self, vector_or_matrix):
         x0, y0, theta = self.position
