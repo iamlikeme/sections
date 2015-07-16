@@ -10,6 +10,14 @@ from core import SimpleSection, ComplexSection, Dimensions
 class Rectangle(SimpleSection):
     dimensions = Dimensions(a=None, b=None)
     
+    
+    def check_dimensions(self, dims):
+        if dims.a <= 0:
+            raise ValueError("Invalid dimensions: a <= 0")
+        if dims.b <= 0:
+            raise ValueError("Invalid dimensions: b <= 0")
+        
+    
     @property
     def A(self):
         return self.density * self.a * self.b
@@ -31,6 +39,18 @@ class Rectangle(SimpleSection):
 
 class CircularSector(SimpleSection):
     dimensions = Dimensions(ro=None, ri=None, phi=None)
+
+
+    def check_dimensions(self, dims):
+        if dims.ri < 0:
+            raise ValueError("Invalid dimensions: ri < 0")
+        if dims.ro <= dims.ri:
+            raise ValueError("Invalid dimensions: ro < ri")
+        if dims.phi <= 0:
+            raise ValueError("Invalid dimensions: phi <= 0")
+        if dims.phi > 2*pi:
+            raise ValueError("Invalid dimensions: phi > 2*pi")
+        
 
     @property
     def A(self):
