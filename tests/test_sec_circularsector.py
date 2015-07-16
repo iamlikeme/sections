@@ -21,6 +21,18 @@ class CircularSectorTests(unittest.TestCase, SectionTests):
     
     def scaled_dimensions(self, factor):
     	return {"ro":factor*self.ro, "ri":factor*self.ri}
+    
+
+    def test_check_dimensions(self):
+    	sector = self.get_section()
+    	
+    	self.assertRaises(ValueError, sector.set_dimensions, ri=-1)
+    	self.assertRaises(ValueError, sector.set_dimensions, ro=-1)
+    	self.assertRaises(ValueError, sector.set_dimensions, ro= 0)
+    	self.assertRaises(ValueError, sector.set_dimensions, ro=1, ri=2)
+    	self.assertRaises(ValueError, sector.set_dimensions, phi=-0.1*pi)
+    	self.assertRaises(ValueError, sector.set_dimensions, phi=0)
+    	self.assertRaises(ValueError, sector.set_dimensions, phi=2.1 * pi)
 
 
 class CircularSectorTests2(unittest.TestCase):
