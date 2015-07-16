@@ -94,6 +94,15 @@ class BaseSectionTests(unittest.TestCase):
         section.set_dimensions(dim_a=5, dim_b=6)
         self.assertEqual(section.dim_a, section.dimensions.dim_a)
         self.assertEqual(section.dim_b, section.dimensions.dim_b)
+    
+
+    def test_set_dimensions_calls_check_dimensions(self):
+        def error_raiser():
+            raise ValueError
+        section = BaseSection()
+        section.check_dimensions = error_raiser
+            
+        self.assertRaises(ValueError, section.set_dimensions)    	
 
     
     def test_vector_transformation(self):
