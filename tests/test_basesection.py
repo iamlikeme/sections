@@ -97,7 +97,7 @@ class BaseSectionTests(unittest.TestCase):
     
 
     def test_set_dimensions_calls_check_dimensions(self):
-        def error_raiser():
+        def error_raiser(dims):
             raise ValueError
         section = BaseSection()
         section.check_dimensions = error_raiser
