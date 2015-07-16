@@ -1,6 +1,6 @@
 from math import sin, cos, pi
 
-from core import SimpleSection, ComplexSection, Dimensions
+from core import SimpleSection, ComplexSection, Dimensions, cached_property
 
 # ==============================================================================
 # S I M P L E   S E C T I O N S
@@ -18,17 +18,17 @@ class Rectangle(SimpleSection):
             raise ValueError("Invalid dimensions: b <= 0")
         
     
-    @property
+    @cached_property
     def A(self):
         return self.density * self.a * self.b
     
 
-    @property
+    @cached_property
     def _cog(self):
         return 0.0, 0.0
     
     
-    @property
+    @cached_property
     def _I0(self):
         _I11 = self.a * self.b**3 / 12.
         _I22 = self.b * self.a**3 / 12.
@@ -52,7 +52,7 @@ class CircularSector(SimpleSection):
             raise ValueError("Invalid dimensions: phi > 2*pi")
         
 
-    @property
+    @cached_property
     def A(self):
         ro  = self.ro
         ri  = self.ri
@@ -61,7 +61,7 @@ class CircularSector(SimpleSection):
         return self.density * A
 
     
-    @property
+    @cached_property
     def _cog(self):
         ro  = self.ro
         ri  = self.ri
@@ -73,7 +73,7 @@ class CircularSector(SimpleSection):
         return _e1, _e2
 
 
-    @property
+    @cached_property
     def _I0(self):
         ro  = self.ro
         ri  = self.ri

@@ -205,7 +205,8 @@ class BaseSection(object):
             self.__density = float(value)
         else:
             raise ValueError("Cannot set density to zero")
-    
+        self.reset_cached_properties()
+        
 
     def set_dimensions(self, **kwargs):
         dims = self.dimensions.copy()
@@ -213,6 +214,7 @@ class BaseSection(object):
         self.check_dimensions(dims)
         
         self.dimensions.update(**kwargs)
+        self.reset_cached_properties()
     
     
     def set_position(self, d1=None, d2=None, theta=None):
@@ -224,6 +226,8 @@ class BaseSection(object):
         if theta is not None:
             position[2] = float(theta)
         self.__position = tuple(position)
+        self.reset_cached_properties()
+        
 
     # ===========================================================
     
@@ -233,7 +237,13 @@ class BaseSection(object):
         are updated. The function should raise a ValueError if *dims* (a Dimensions
         object) is an invalid combination of dimensions."""
         pass
-        
+    
+    
+    def reset_cached_properties(self):
+        is_cached = lambda attr: isinstance(getattr(self.__class__, attr, None), cached_property)
+        for attr in [a for a in self.__dict__ if is_cached(a)]:
+            delattr(self, attr)
+    
     
     def transform_to_global(self, vector_or_matrix):
         x0, y0, theta = self.position
@@ -280,21 +290,21 @@ class BaseSection(object):
     # Physical properties to be implemented in a subclass
     # ---------------------------------------------------
     
-    @property
+    @cached_property
     def _cog(self):
         """
         Position of the centre of gravity in the local csys."""
         raise NotImplementedError
     
 
-    @property
+    @cached_property
     def A(self):
         """
         Surface area (mass)"""
         raise NotImplementedError
     
     
-    @property
+    @cached_property
     def _I0(self):
         """
         Moments of inertia (I11, I22, I12) in the local csys translated to the cog."""
@@ -304,28 +314,28 @@ class BaseSection(object):
     # Other physical properties
     # ---------------------------------------------------
     
-    @property
+    @cached_property
     def cog(self):
         """
         Position of the centre of gravity in the global csys."""
         return self.transform_to_global(self._cog)
 
     
-    @property
+    @cached_property
     def I0(self):
         """
         Moment of inertia (I11, I22, I12) in the global csys translated to the cog."""
         return self.transform_to_global(self._I0)
     
     
-    @property
+    @cached_property
     def _I(self):
         """
         Moments of inertia (I11, I22, I12) in the local csys."""
         return self.parallel_axis(self._I0, self._cog)
     
     
-    @property
+    @cached_property
     def I(self):
         """
         Moments of inertia (I11, I22, I12) in the global csys."""
@@ -372,7 +382,7 @@ class ComplexSection(BaseSection):
     
     # Physical properties to be implemented in a subclass
     # ---------------------------------------------------
-    @property
+    @cached_property
     def _cog(self):
         """
         Position of the centre of gravity in the local csys."""
@@ -383,14 +393,14 @@ class ComplexSection(BaseSection):
         return _e1, _e2
     
 
-    @property
+    @cached_property
     def A(self):
         """
         Surface area (mass)"""
         return sum(section.A for section in self.sections)
     
     
-    @property
+    @cached_property
     def _I0(self):
         """
         Moments of inertia (I11, I22, I12) in the local csys translated to the cog."""
