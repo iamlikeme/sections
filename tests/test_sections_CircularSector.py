@@ -2,7 +2,7 @@ import unittest
 from math import pi
 
 from sections.sections import CircularSector
-from tests.test_section import SectionTests
+from tests.test_sections import SectionTests
 
 class CircularSectorTests(unittest.TestCase, SectionTests):
     

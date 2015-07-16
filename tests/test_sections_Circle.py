@@ -1,7 +1,7 @@
 import unittest
 
 from sections.sections import Circle
-from tests.test_section import SectionTests
+from tests.test_sections import SectionTests
 
 class CircleTests(unittest.TestCase, SectionTests):
     

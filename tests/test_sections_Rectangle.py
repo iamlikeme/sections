@@ -1,7 +1,7 @@
 import unittest
 
 from sections.sections import Rectangle
-from tests.test_section import SectionTests
+from tests.test_sections import SectionTests
 
 class RectangleTests(unittest.TestCase, SectionTests):
     

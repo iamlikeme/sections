@@ -160,6 +160,8 @@ class VertexArray(object):
 class SectionType(type):
     
     def __init__(cls, *args, **kwargs):
+    
+        # Create a read-only property for each dimension
         for name in cls.dimensions.to_dict():
             setattr(cls, name, property(attrgetter("dimensions.%s" %name)))
 
@@ -185,8 +187,8 @@ class BaseSection(object):
             self.dimensions.update(**dimensions)
 
 
-    # Setters and getters for attributes that affect the physical
-    # properties of the section: density, dimensions, position
+    # Setters and getters for density, dimensions and position 
+    # (i.e. attributes that affect the physical properties)
     # ===========================================================        
     
     @property
@@ -231,19 +233,13 @@ class BaseSection(object):
 
     # ===========================================================
     
-    def check_dimensions(self, dims):
-        """
-        This function is called by set_dimensions before section dimensions
-        are updated. The function should raise a ValueError if *dims* (a Dimensions
-        object) is an invalid combination of dimensions."""
-        pass
-    
-    
     def reset_cached_properties(self):
         is_cached = lambda attr: isinstance(getattr(self.__class__, attr, None), cached_property)
         for attr in [a for a in self.__dict__ if is_cached(a)]:
             delattr(self, attr)
     
+
+    # ===========================================================
     
     def transform_to_global(self, vector_or_matrix):
         x0, y0, theta = self.position
@@ -280,6 +276,16 @@ class BaseSection(object):
         return I11, I22, I12
 
 
+    # ===========================================================
+    
+    def check_dimensions(self, dims):
+        """
+        This function is called by set_dimensions before section dimensions
+        are updated. The function should raise a ValueError if *dims* (a Dimensions
+        object) is an invalid combination of dimensions."""
+        pass
+    
+    
     # Physical properties of the section
     # ==================================
     
@@ -352,6 +358,8 @@ class ComplexSection(BaseSection):
     densities = NotImplemented
 
     def update_sections(self):
+        """
+        Set dimensions and positions of self.sections"""
         raise NotImplementedError
 
 

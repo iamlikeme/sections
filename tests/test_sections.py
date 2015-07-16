@@ -3,7 +3,14 @@ from math import pi
 
 
 class SectionTests(object):
+    """
+    Defines tests that should be run for subclasses of SimpleSection and
+    ComplexSection.
+    """
     
+    # The following values should be set in a subclass (or in its setUp method)
+    # Provide values with at least 7 decimal digits accuracy (so they pass
+    # assertAlmostEqual)
     cls        = NotImplemented  # Section class to be checked
     dimensions = NotImplemented  # Should be a dict
     rp         = NotImplemented  # Position of the reference point
@@ -14,6 +21,8 @@ class SectionTests(object):
         
     
     def get_section(self, density=1.0):
+        """
+        A shortcut function to create a section with predefined dimensions."""
         kwargs = {"density" : density}
         kwargs.update(self.dimensions)
         return self.cls(**kwargs)
