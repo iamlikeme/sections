@@ -26,10 +26,15 @@ class SectionTests(object):
     def test_properties_in_local_csys(self):
         sec = self.get_section()
         
-        self.assertEqual(sec.A, self.A)
-        self.assertEqual(sec._cog, self._cog)
-        self.assertEqual(sec._I0, self._I0)
-        self.assertEqual(sec._I, self._I)
+        self.assertAlmostEqual(sec.A, self.A)
+        self.assertAlmostEqual(sec._cog[0], self._cog[0])
+        self.assertAlmostEqual(sec._cog[1], self._cog[1])
+        self.assertAlmostEqual(sec._I0[0], self._I0[0])
+        self.assertAlmostEqual(sec._I0[1], self._I0[1])
+        self.assertAlmostEqual(sec._I0[2], self._I0[2])
+        self.assertAlmostEqual(sec._I[0], self._I[0])
+        self.assertAlmostEqual(sec._I[1], self._I[1])
+        self.assertAlmostEqual(sec._I[2], self._I[2])
 
 
     def test_density(self):
