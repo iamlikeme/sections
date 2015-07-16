@@ -15,3 +15,11 @@ class RectangleTests(unittest.TestCase, SectionTests):
         self._I0        = 4.5, 2.0, 0.0
         self._I         = self._I0
         self._cog       = 0.0, 0.0
+        
+    
+    def test_check_dimensions(self):
+    	rect = Rectangle(a=1, b=2)
+    	self.assertRaises(ValueError, rect.set_dimensions, a=-1)
+    	self.assertRaises(ValueError, rect.set_dimensions, b=-1)
+    	self.assertRaises(ValueError, rect.set_dimensions, a=0)
+    	self.assertRaises(ValueError, rect.set_dimensions, b=0)
