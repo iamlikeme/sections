@@ -85,38 +85,92 @@ class CircularSector(SimpleSection):
         return self.parallel_axis((_I11, _I22, _I12), self._cog, reverse=True)
 
 
+
 class Polygon(SimpleSection, list):
     
+
+    @cached_property
+    def A(self):
+        if len(self) < 3:
+            raise ValueError("Cannot calculate A: Polygon must have at least three vertices")
+
+        #Area will be positive if vertices are ordered counter-clockwise
+        x1, x2 = self.__looped_vertices()
+        n = len(self)
+        A = 0.5 * sum(x1[i]*x2[i+1] - x1[i+1]*x2[i] for i in range(n))
+        return self.density * A
+    
+    
+    @cached_property
+    def _cog(self):
+        if len(self) < 3:
+            raise ValueError("Cannot calculate _cog: Polygon must have at least three vertices")
+
+        x1, x2 = self.__looped_vertices()
+        n = len(self)
+        A = self.A / self.density
+        _e1 = 1. / (6 * A) * sum( (x1[i] + x1[i+1]) * (x1[i]*x2[i+1] - x1[i+1]*x2[i]) for i in range(n) )
+        _e2 = 1. / (6 * A) * sum( (x2[i] + x2[i+1]) * (x1[i]*x2[i+1] - x1[i+1]*x2[i]) for i in range(n) )
+        return _e1, _e2
+            
+            
+    @cached_property
+    def _I0(self):
+        if len(self) < 3:
+            raise ValueError("Cannot calculate _I0: Polygon must have at least three vertices")
+        
+        x1, x2 = self.__looped_vertices()
+        n = len(self)
+        _I11 = 1./12. * sum( (x2[i]**2 + x2[i]*x2[i+1] + x2[i+1]**2) * (x1[i]*x2[i+1] - x1[i+1]*x2[i]) for i in range(n))
+        _I22 = 1./12. * sum( (x1[i]**2 + x1[i]*x1[i+1] + x1[i+1]**2) * (x1[i]*x2[i+1] - x1[i+1]*x2[i]) for i in range(n))
+        _I12 = 1./24. * sum( (x1[i]*x2[i+1] + 2*x1[i]*x2[i] + 2*x1[i+1]*x2[i+1] + x1[i+1]*x2[i] )*(x1[i]*x2[i+1] - x1[i+1]*x2[i]) for i in range(n))
+
+        _I = tuple(self.density * i for i in (_I11, _I22, _I12))
+        return self.parallel_axis(_I, self._cog, reverse=True)
+
+    
+    def __looped_vertices(self):
+        n = len(self)
+        x1 = [self[i%n][0] for i in range(n + 1)]
+        x2 = [self[i%n][1] for i in range(n + 1)]
+        return x1, x2
+
     
     # Override list methods which add new items to the list
     # Only allow to add items consisting of two values which can be
-    # convered to float
+    # convered to float.
+    # Any change of vertices must call self.reset_cached_properties
     # =============================================================
     
     def append(self, vertex):
         vertex = self.__convert_to_vertices(vertex)[0]
         list.append(self, vertex)
+        self.reset_cached_properties()
     
 
     def extend(self, vertices):
         vertices = self.__convert_to_vertices(*vertices)
         list.extend(self, vertices)
-    
+        self.reset_cached_properties()
+        
     
     def insert(self, i, vertex):
         vertex = self.__convert_to_vertices(vertex)[0]
         list.insert(self, i, vertex)
-    
+        self.reset_cached_properties()
+        
     
     def __setitem__(self, i, vertex):
         vertex = self.__convert_to_vertices(vertex)[0]
         list.__setitem__(self, i, vertex)
+        self.reset_cached_properties()
     
     
     def __setslice__(self, i, j, vertices):
         vertices = self.__convert_to_vertices(*vertices)
         list.__setslice__(self, i, j, vertices)
-        
+        self.reset_cached_properties()
+                
     
     def __convert_to_vertices(self, *items):
         return [(float(x), float(y)) for x, y in items]
