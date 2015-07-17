@@ -86,12 +86,12 @@ class SectionTests(object):
         # The diagonal moments of inertia (I11, I22) should switch places
         self.assertAlmostEqual(sec.I0[0], self._I0[1])
         self.assertAlmostEqual(sec.I0[1], self._I0[0])
-        self.assertAlmostEqual(sec.I0[2], self._I0[2])
+        self.assertAlmostEqual(sec.I0[2], -self._I0[2])
         
         # The diagonal moments of inertia (I11, I22) should switch places
         self.assertAlmostEqual(sec.I[0], self._I[1])
         self.assertAlmostEqual(sec.I[1], self._I[0])
-        self.assertAlmostEqual(sec.I[2], self._I[2])
+        self.assertAlmostEqual(sec.I[2], -self._I[2])
 
         # Check offset with no rotation
         # =============================        
