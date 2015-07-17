@@ -180,7 +180,57 @@ class Polygon(SimpleSection, list):
 
 
 
+class Triangle(Polygon):
+
+    # Override list methods which add new items to the list
+    # Only allow to add items consisting of two values which can be
+    # convered to float.
+    # Any change of vertices must call self.reset_cached_properties
+    # =============================================================
     
+    def append(self, vertex):
+        if len(self) == 3:
+            raise IndexError("Triangle cannot have more than 3 vertices")
+        super(Triangle, self).append(vertex)
+    
+
+    def extend(self, vertices):        
+        vertices = self.convert_to_vertices(*vertices)
+        if len(self) + len(vertices) > 3:
+            raise IndexError("Triangle cannot have more than 3 vertices")
+        super(Triangle, self).extend(vertices)
+        
+    
+    def insert(self, i, vertex):
+        if len(self) == 3:
+            raise IndexError("Triangle cannot have more than 3 vertices")
+        super(Triangle, self).insert(i, vertex)
+        
+    
+    def __setslice__(self, i, j, vertices):
+        vertices = self.convert_to_vertices(*vertices)
+        resulting = self[:]
+        resulting.__setslice__(i, j, vertices)
+        if len(resulting) > 3:
+            raise IndexError("Triangle cannot have more than 3 vertices")        
+        super(Triangle, self).__setslice__(i, j, vertices)
+
+                
+    # =============================================================
+    
+    def reset_cached_properties(self):
+        
+        if len(self) == 3:
+            x, y = zip(*self)
+            v1 = x[1] - x[0], y[1] - y[0]
+            v2 = x[2] - x[1], y[2] - y[1]
+            sin = v1[0] * v2[1] - v1[1] * v2[0]
+            if sin < 0:
+                self[:] = self[0], self[2], self[1]
+        super(Triangle, self).reset_cached_properties()
+            
+            
+        
 
 
 
