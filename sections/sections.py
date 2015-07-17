@@ -143,40 +143,44 @@ class Polygon(SimpleSection, list):
     # =============================================================
     
     def append(self, vertex):
-        vertex = self.__convert_to_vertices(vertex)[0]
+        vertex = self.convert_to_vertices(vertex)[0]
         list.append(self, vertex)
         self.reset_cached_properties()
     
 
     def extend(self, vertices):
-        vertices = self.__convert_to_vertices(*vertices)
+        vertices = self.convert_to_vertices(*vertices)
         list.extend(self, vertices)
         self.reset_cached_properties()
         
     
     def insert(self, i, vertex):
-        vertex = self.__convert_to_vertices(vertex)[0]
+        vertex = self.convert_to_vertices(vertex)[0]
         list.insert(self, i, vertex)
         self.reset_cached_properties()
         
     
     def __setitem__(self, i, vertex):
-        vertex = self.__convert_to_vertices(vertex)[0]
+        vertex = self.convert_to_vertices(vertex)[0]
         list.__setitem__(self, i, vertex)
         self.reset_cached_properties()
     
     
     def __setslice__(self, i, j, vertices):
-        vertices = self.__convert_to_vertices(*vertices)
+        vertices = self.convert_to_vertices(*vertices)
         list.__setslice__(self, i, j, vertices)
         self.reset_cached_properties()
                 
     
-    def __convert_to_vertices(self, *items):
+    @staticmethod
+    def convert_to_vertices(*items):
         return [(float(x), float(y)) for x, y in items]
             
     # =============================================================
 
+
+
+    
 
 
 
