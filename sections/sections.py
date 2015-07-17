@@ -85,6 +85,46 @@ class CircularSector(SimpleSection):
         return self.parallel_axis((_I11, _I22, _I12), self._cog, reverse=True)
 
 
+class Polygon(SimpleSection, list):
+    
+    
+    # Override list methods which add new items to the list
+    # Only allow to add items consisting of two values which can be
+    # convered to float
+    # =============================================================
+    
+    def append(self, vertex):
+        vertex = self.__convert_to_vertices(vertex)[0]
+        list.append(self, vertex)
+    
+
+    def extend(self, vertices):
+        vertices = self.__convert_to_vertices(*vertices)
+        list.extend(self, vertices)
+    
+    
+    def insert(self, i, vertex):
+        vertex = self.__convert_to_vertices(vertex)[0]
+        list.insert(self, i, vertex)
+    
+    
+    def __setitem__(self, i, vertex):
+        vertex = self.__convert_to_vertices(vertex)[0]
+        list.__setitem__(self, i, vertex)
+    
+    
+    def __setslice__(self, i, j, vertices):
+        vertices = self.__convert_to_vertices(*vertices)
+        list.__setslice__(self, i, j, vertices)
+        
+    
+    def __convert_to_vertices(self, *items):
+        return [(float(x), float(y)) for x, y in items]
+            
+    # =============================================================
+
+
+
 
 # ==============================================================================
 # C O M P L E X   S E C T I O N S
