@@ -18,6 +18,12 @@ class TestPhysicalProperties(generic.TestPhysicalProperties, unittest.TestCase):
         cls.A          = 14.137166941154069
         cls._I0        = 31.808625617596654, 8.890313812363729, 0.0
         cls._I         = 31.808625617596654, 31.808625617596654, 0.0
+    
+    
+    def scale_section_dimensions(self, factor, section=None):
+    	if section is None:
+    	    section = self.section
+    	section.set_dimensions(r=factor*self.dimensions["r"])
 
     
     def test_check_dimensions(self):
