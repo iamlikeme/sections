@@ -48,6 +48,12 @@ class TestPhysicalProperties(object):
         the dimensions are linear (only linear dimensions should be scaled)."""
         return {k:factor*v for k,v in self.dimensions.items()}
     
+    
+    def test_check_dimensions(self):
+    	"""
+    	To be implemented in subclass."""
+    	raise NotImplementedError
+    
 
     def test_properties_in_local_csys(self):
         
