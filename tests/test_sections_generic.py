@@ -14,7 +14,7 @@ class TestPhysicalProperties(object):
     	be checked against. Provide values with at least 7 decimal digits
     	accuracy (so they pass assertAlmostEqual)"""
 
-        cls.sectcls    = NotImplemented  # Section class to be checked
+        cls.sectclass = NotImplemented  # Section class to be checked
         cls.dimensions = NotImplemented  # Dictionary of section dimensions
 
         # The following physical properties should correspond to cls.dimensions
@@ -38,7 +38,7 @@ class TestPhysicalProperties(object):
         A shortcut function to create a section with predefined dimensions."""
         kwargs = {"density" : density}
         kwargs.update(self.dimensions)
-        return self.sectcls(**kwargs)
+        return self.sectclass(**kwargs)
     
         
     def scaled_dimensions(self, factor):
@@ -63,31 +63,32 @@ class TestPhysicalProperties(object):
 
 
     def test_properties_change_on_density_change(self):
-        section = self.get_section(density=2.0)
+        self.section = self.get_section(density=2.0)
         
         # Position of cog should be independent on density
         # Other properties should change proportionally with density
         
-        self.assertAlmostEqual(section.A, 2*self.A)
-        self.assertAlmostEqual(section._cog[0], self._cog[0])
-        self.assertAlmostEqual(section._cog[1], self._cog[1])
-        self.assertAlmostEqual(section._I0[0], 2*self._I0[0])
-        self.assertAlmostEqual(section._I0[1], 2*self._I0[1])
-        self.assertAlmostEqual(section._I0[2], 2*self._I0[2])
-        self.assertAlmostEqual(section._I[0],  2*self._I[0])
-        self.assertAlmostEqual(section._I[1],  2*self._I[1])
-        self.assertAlmostEqual(section._I[2],  2*self._I[2])
+        self.assertAlmostEqual(self.section.A, 2*self.A)
+        self.assertAlmostEqual(self.section._cog[0], self._cog[0])
+        self.assertAlmostEqual(self.section._cog[1], self._cog[1])
+        self.assertAlmostEqual(self.section._I0[0], 2*self._I0[0])
+        self.assertAlmostEqual(self.section._I0[1], 2*self._I0[1])
+        self.assertAlmostEqual(self.section._I0[2], 2*self._I0[2])
+        self.assertAlmostEqual(self.section._I[0],  2*self._I[0])
+        self.assertAlmostEqual(self.section._I[1],  2*self._I[1])
+        self.assertAlmostEqual(self.section._I[2],  2*self._I[2])
         
-        sec.set_density(-3)
-        self.assertAlmostEqual(sec.A, -3*self.A)
-        self.assertAlmostEqual(sec._cog[0], self._cog[0])
-        self.assertAlmostEqual(sec._cog[1], self._cog[1])
-        self.assertAlmostEqual(sec._I0[0], -3*self._I0[0])
-        self.assertAlmostEqual(sec._I0[1], -3*self._I0[1])
-        self.assertAlmostEqual(sec._I0[2], -3*self._I0[2])
-        self.assertAlmostEqual(sec._I[0],  -3*self._I[0])
-        self.assertAlmostEqual(sec._I[1],  -3*self._I[1])
-        self.assertAlmostEqual(sec._I[2],  -3*self._I[2])
+        self.section.set_density(-3)
+        
+        self.assertAlmostEqual(self.section.A, -3*self.A)
+        self.assertAlmostEqual(self.section._cog[0], self._cog[0])
+        self.assertAlmostEqual(self.section._cog[1], self._cog[1])
+        self.assertAlmostEqual(self.section._I0[0], -3*self._I0[0])
+        self.assertAlmostEqual(self.section._I0[1], -3*self._I0[1])
+        self.assertAlmostEqual(self.section._I0[2], -3*self._I0[2])
+        self.assertAlmostEqual(self.section._I[0],  -3*self._I[0])
+        self.assertAlmostEqual(self.section._I[1],  -3*self._I[1])
+        self.assertAlmostEqual(self.section._I[2],  -3*self._I[2])
 
 
     def test_properties_change_on_position_change(self):
