@@ -7,12 +7,12 @@ from sections.sections import CircularSector
 import test_sections_generic as generic
 
 
-class TestPhysicalProperties(generic.TestPhysicalProperties, unittest.TestCase):
+class TestPhysicalProperties1(generic.TestPhysicalProperties, unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
         cls.sectclass  = CircularSector
-        cls.dimensions = {"ro":5.0, "ri":0.0, "phi":pi/3}
+        cls.dimensions = dict(ro=5.0, ri=0.0, phi=pi/3)
         cls.rp         = 3.0, 4.0
         cls.A          = 13.08996938995747
         cls._I         = 14.154074016574924, 149.47054335789346, 0.0
@@ -38,9 +38,20 @@ class TestPhysicalProperties(generic.TestPhysicalProperties, unittest.TestCase):
     	self.assertRaises(ValueError, self.section.set_dimensions, phi=2.1 * pi)
     
     
-    def test_todo(self):
-        self.fail("TODO: Add tests for circular sector with ri>0")
 
+class TestPhysicalProperties2(TestPhysicalProperties1):
+    
+    @classmethod
+    def setUpClass(cls):
+        cls.sectclass  = CircularSector
+        cls.dimensions = dict(ro=5.0, ri=3.0, phi=pi)
+        cls.rp         = 5.0, 4.0
+        cls._cog       = 2.599530737167624, 0.0
+        cls.A          = 25.132741228718345
+        cls._I0        = 213.62830044410595, 43.792292282487864, 0.0
+        cls._I         = 213.62830044410595, 213.62830044410595, 0.0
+
+    
 
 if __name__ == "__main__":
     unittest.main()
