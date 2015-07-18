@@ -40,13 +40,17 @@ class TestPhysicalProperties(object):
         kwargs.update(self.dimensions)
         return self.sectclass(**kwargs)
     
-        
-    def scaled_dimensions(self, factor):
+
+    def scale_section_dimensions(self, factor, section=None):
         """
-        Returns a copy of self.dimensions whith all values multiplied by
-        *factor*. It may be necessary to override this method if some of
-        the dimensions are linear (only linear dimensions should be scaled)."""
-        return {k:factor*v for k,v in self.dimensions.items()}
+        Scales dimensions of section (self.section by default) by the
+        specified factor. Only linear dimensions should be scaled so
+        if section has angular dimensions this method should be overriden.
+        """
+        if section is None:
+            section = self.section
+        dimensions = {k:factor*v for k,v in self.dimensions.items()}
+        section.set_dimensions(**dimensions)
     
     
     def test_check_dimensions(self):
@@ -155,9 +159,9 @@ class TestPhysicalProperties(object):
         self.section._I0
         self.section._I
 
-        # Change linear dimensions
+        # Change linear dimensions and calculate expected properties
         scale = 2.0
-        self.section.set_dimensions(**self.scaled_dimensions(scale))
+        self.scale_section_dimensions(scale)
         
         # Expected properties after change of dimensions
         A   = self.A * scale**2
