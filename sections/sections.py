@@ -299,3 +299,13 @@ class Ring(ComplexSection):
     
     def check_dimensions(self, dims):
         super(Ring, self).check_dimensions(dims)
+
+
+
+class Wedge(ComplexSection):
+    sections   = [CircularSector]
+    dimensions = Dimensions(r=None, phi=None)
+    
+    
+    def update_sections(self):
+        self.sections[0].set_dimensions(ro=self.r, ri=0, phi=self.phi)
