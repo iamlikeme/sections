@@ -286,4 +286,16 @@ class Box(ComplexSection):
             ( ai,  bi),
             ( ai, -bi),
             (-ao, -bi)]
-        
+
+
+class Ring(ComplexSection):
+    sections   = [CircularSector]
+    dimensions = Dimensions(ro=None, ri=None)
+    
+    
+    def update_sections(self):
+        self.sections[0].set_dimensions(ro=self.ro, ri=self.ri, phi=2*pi)
+    
+    
+    def check_dimensions(self, dims):
+        super(Ring, self).check_dimensions(dims)
