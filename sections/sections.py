@@ -85,6 +85,46 @@ class CircularSector(SimpleSection):
         return self.parallel_axis((_I11, _I22, _I12), self._cog, reverse=True)
 
 
+class CircularSegment(SimpleSection):
+    dimensions = Dimensions(r=None, phi=None)
+
+
+    def check_dimensions(self, dims):
+        if dims.r <= 0:
+            raise ValueError("Invalid dimensions: r <= 0")
+        if dims.phi <= 0:
+            raise ValueError("Invalid dimensions: phi <= 0")
+        if dims.phi > 2*pi:
+            raise ValueError("Invalid dimensions: phi > 0")
+        
+
+    @cached_property
+    def _cog(self):
+        r, phi = self.r, self.phi
+        _e1 = 4 * sin(0.5*phi)**3 * r / (3 * (phi - sin(phi)) )
+        _e2 = 0.0
+        return _e1, _e2
+    
+
+    @cached_property
+    def A(self):
+        r, phi = self.r, self.phi
+        return self.density * 0.5 * r**2 * (phi - sin(phi))
+
+
+    @cached_property
+    def _I0(self):
+        r   = self.r
+        phi = self.phi
+        A  = self.A / self.density
+        e1, e2 = self._cog
+        I11 = 1. / 48. * r**4 * (6*phi - 8*sin(phi) + sin(2*phi))        
+        I22 = 0.125 * r**4 * (phi - sin(phi)*cos(phi)) - A * e1**2
+        I12 = 0.0
+        return tuple(self.density * i for i in (I11, I22, I12))
+    
+
+
 
 class Polygon(SimpleSection, list):
     
