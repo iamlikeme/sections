@@ -309,3 +309,7 @@ class Wedge(ComplexSection):
     
     def update_sections(self):
         self.sections[0].set_dimensions(ro=self.r, ri=0, phi=self.phi)
+        
+
+class WedgeRing(CircularSector):
+    pass
