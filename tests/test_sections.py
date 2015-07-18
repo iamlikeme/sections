@@ -1,23 +1,36 @@
-import unittest
 from math import pi
 
 
-class SectionTests(object):
+class TestPhysicalProperties(object):
     """
     Defines tests that should be run for subclasses of SimpleSection and
     ComplexSection.
     """
     
-    # The following values should be set in a subclass (or in its setUp method)
-    # Provide values with at least 7 decimal digits accuracy (so they pass
-    # assertAlmostEqual)
-    cls        = NotImplemented  # Section class to be checked
-    dimensions = NotImplemented  # Should be a dict
-    rp         = NotImplemented  # Position of the reference point
-    A          = NotImplemented  # Surface area
-    _I0        = NotImplemented  # Moments of inertia in local csys moved to cog
-    _I         = NotImplemented  # Moments of inertia in local csys
-    _cog       = NotImplemented  # Position of the cog in local csys
+    @classmethod
+    def setUpClass(cls):
+    	"""
+    	Defines known values of physical properties that a section will
+    	be checked against. Provide values with at least 7 decimal digits
+    	accuracy (so they pass assertAlmostEqual)"""
+
+        cls.sectcls    = NotImplemented  # Section class to be checked
+        cls.dimensions = NotImplemented  # Dictionary of section dimensions
+
+        # The following physical properties should correspond to cls.dimensions
+        cls._cog = NotImplemented  # Position of the cog in local csys
+        cls.A    = NotImplemented  # Surface area
+        cls._I0  = NotImplemented  # Moments of inertia in local csys moved to cog
+        cls._I   = NotImplemented  # Moments of inertia in local csys
+        
+        # Position of the reference point (rp below) is used to test
+        # set_position method. Specify rp coordinates which are of the
+        # same order of magnitude as the linear dimensions of the section
+        rp       = NotImplemented
+    
+    
+    def setUp(self):
+        self.section = self.get_section()
         
     
     def get_section(self, density=1.0):
@@ -25,108 +38,131 @@ class SectionTests(object):
         A shortcut function to create a section with predefined dimensions."""
         kwargs = {"density" : density}
         kwargs.update(self.dimensions)
-        return self.cls(**kwargs)
+        return self.sectcls(**kwargs)
     
-    
+        
     def scaled_dimensions(self, factor):
+        """
+        Returns a copy of self.dimensions whith all values multiplied by
+        *factor*. It may be necessary to override this method if some of
+        the dimensions are linear (only linear dimensions should be scaled)."""
         return {k:factor*v for k,v in self.dimensions.items()}
     
 
     def test_properties_in_local_csys(self):
-        sec = self.get_section()
         
-        self.assertAlmostEqual(sec.A, self.A)
-        self.assertAlmostEqual(sec._cog[0], self._cog[0])
-        self.assertAlmostEqual(sec._cog[1], self._cog[1])
-        self.assertAlmostEqual(sec._I0[0], self._I0[0])
-        self.assertAlmostEqual(sec._I0[1], self._I0[1])
-        self.assertAlmostEqual(sec._I0[2], self._I0[2])
-        self.assertAlmostEqual(sec._I[0], self._I[0])
-        self.assertAlmostEqual(sec._I[1], self._I[1])
-        self.assertAlmostEqual(sec._I[2], self._I[2])
+        self.assertAlmostEqual(self.section.A, self.A)
+        self.assertAlmostEqual(self.section._cog[0], self._cog[0])
+        self.assertAlmostEqual(self.section._cog[1], self._cog[1])
+        self.assertAlmostEqual(self.section._I0[0],  self._I0[0])
+        self.assertAlmostEqual(self.section._I0[1],  self._I0[1])
+        self.assertAlmostEqual(self.section._I0[2],  self._I0[2])
+        self.assertAlmostEqual(self.section._I[0],   self._I[0])
+        self.assertAlmostEqual(self.section._I[1],   self._I[1])
+        self.assertAlmostEqual(self.section._I[2],   self._I[2])
 
 
-    def test_density(self):
-        sec = self.get_section(density=2.0)
-
-        self.assertAlmostEqual(sec._cog[0], self._cog[0])
-        self.assertAlmostEqual(sec._cog[1], self._cog[1])
-        self.assertAlmostEqual(sec.A, 2*self.A)
-        self.assertAlmostEqual(sec._I0[0], 2*self._I0[0])
-        self.assertAlmostEqual(sec._I0[1], 2*self._I0[1])
-        self.assertAlmostEqual(sec._I0[2], 2*self._I0[2])
-        self.assertAlmostEqual(sec._I[0], 2*self._I[0])
-        self.assertAlmostEqual(sec._I[1], 2*self._I[1])
-        self.assertAlmostEqual(sec._I[2], 2*self._I[2])
+    def test_properties_change_on_density_change(self):
+        section = self.get_section(density=2.0)
+        
+        # Position of cog should be independent on density
+        # Other properties should change proportionally with density
+        
+        self.assertAlmostEqual(section.A, 2*self.A)
+        self.assertAlmostEqual(section._cog[0], self._cog[0])
+        self.assertAlmostEqual(section._cog[1], self._cog[1])
+        self.assertAlmostEqual(section._I0[0], 2*self._I0[0])
+        self.assertAlmostEqual(section._I0[1], 2*self._I0[1])
+        self.assertAlmostEqual(section._I0[2], 2*self._I0[2])
+        self.assertAlmostEqual(section._I[0],  2*self._I[0])
+        self.assertAlmostEqual(section._I[1],  2*self._I[1])
+        self.assertAlmostEqual(section._I[2],  2*self._I[2])
         
         sec.set_density(-3)
+        self.assertAlmostEqual(sec.A, -3*self.A)
         self.assertAlmostEqual(sec._cog[0], self._cog[0])
         self.assertAlmostEqual(sec._cog[1], self._cog[1])
-        self.assertAlmostEqual(sec.A, -3*self.A)
         self.assertAlmostEqual(sec._I0[0], -3*self._I0[0])
         self.assertAlmostEqual(sec._I0[1], -3*self._I0[1])
         self.assertAlmostEqual(sec._I0[2], -3*self._I0[2])
-        self.assertAlmostEqual(sec._I[0], -3*self._I[0])
-        self.assertAlmostEqual(sec._I[1], -3*self._I[1])
-        self.assertAlmostEqual(sec._I[2], -3*self._I[2])
+        self.assertAlmostEqual(sec._I[0],  -3*self._I[0])
+        self.assertAlmostEqual(sec._I[1],  -3*self._I[1])
+        self.assertAlmostEqual(sec._I[2],  -3*self._I[2])
 
 
-    def test_position(self):
-        sec = self.get_section()
+    def test_properties_change_on_position_change(self):
         
         # Check rotation without offset
         # =============================
-        sec.set_position(d1=0.0, d2=0.0, theta=pi/2)
+        self.section.set_position(d1=0.0, d2=0.0, theta=pi/2)
         
         # Properties in the local csys should not change
-        self.assertEqual(sec.A, self.A)
-        self.assertEqual(sec._I0, self._I0)
-        self.assertEqual(sec._I, self._I)
+        # ----------------------------------------------
+        self.assertEqual(self.section.A,   self.A)
+        self.assertEqual(self.section._I0, self._I0)
+        self.assertEqual(self.section._I,  self._I)
         
-        # The diagonal moments of inertia (I11, I22) should switch places
-        self.assertAlmostEqual(sec.I0[0], self._I0[1])
-        self.assertAlmostEqual(sec.I0[1], self._I0[0])
-        self.assertAlmostEqual(sec.I0[2], self._I0[2])
-        
-        # The diagonal moments of inertia (I11, I22) should switch places
-        self.assertAlmostEqual(sec.I[0], self._I[1])
-        self.assertAlmostEqual(sec.I[1], self._I[0])
-        self.assertAlmostEqual(sec.I[2], self._I[2])
+        # Properties in the global csys should change
+        # -------------------------------------------
+        # The diagonal moments of inertia (I11, I22) should be swapped
+        # The product moment of inertia (I12) should change sign
+        self.assertAlmostEqual(self.section.I0[0],  self._I0[1])
+        self.assertAlmostEqual(self.section.I0[1],  self._I0[0])
+        self.assertAlmostEqual(self.section.I0[2], -self._I0[2])        
+        self.assertAlmostEqual(self.section.I[0],   self._I[1])
+        self.assertAlmostEqual(self.section.I[1],   self._I[0])
+        self.assertAlmostEqual(self.section.I[2],  -self._I[2])
 
         # Check offset with no rotation
         # =============================        
-        sec.set_position(d1=self.rp[0], d2=self.rp[1], theta=0)
+        self.section.set_position(d1=self.rp[0], d2=self.rp[1], theta=0)
+        
+        # Calculate position of the cog in global csys
         e1 = self.rp[0] + self._cog[0]
         e2 = self.rp[1] + self._cog[1]
 
         # Properties in the local csys should not change
-        self.assertEqual(sec.A, self.A)
-        self.assertEqual(sec._I0, self._I0)
-        self.assertEqual(sec._I, self._I)
+        # ----------------------------------------------
+        self.assertEqual(self.section.A, self.A)
+        self.assertEqual(self.section._I0, self._I0)
+        self.assertEqual(self.section._I, self._I)
         
         # There is no rotation (theta=0) so I0 and _I0 should be equal
-        self.assertAlmostEqual(sec.I0[0], self._I0[0])
-        self.assertAlmostEqual(sec.I0[1], self._I0[1])
-        self.assertAlmostEqual(sec.I0[2], self._I0[2])
+        # ------------------------------------------------------------
+        self.assertAlmostEqual(self.section.I0[0], self._I0[0])
+        self.assertAlmostEqual(self.section.I0[1], self._I0[1])
+        self.assertAlmostEqual(self.section.I0[2], self._I0[2])
         
-        # Check parallel axis theorem
-        self.assertAlmostEqual(sec.I[0], self._I0[0] + self.A * e2**2)
-        self.assertAlmostEqual(sec.I[1], self._I0[1] + self.A * e1**2)
-        self.assertAlmostEqual(sec.I[2], self._I0[2] + self.A * e1*e2)
+        # Check moments of inertia about the global axes
+        # based on the parallel axis theorem
+        # ----------------------------------------------
+        self.assertAlmostEqual(self.section.I[0], self._I0[0] + self.A * e2**2)
+        self.assertAlmostEqual(self.section.I[1], self._I0[1] + self.A * e1**2)
+        self.assertAlmostEqual(self.section.I[2], self._I0[2] + self.A * e1*e2)
 
 
-    def test_dimensions(self):
-        sec = self.get_section()
-        # Evaluate properties
-        sec.A
-        sec._I0
-        sec._I
-        
-        # Check if properties change when dimensions are changed
+    def test_properties_change_on_dimensions_change(self):
+        # Evaluate properties in the initial state
+        # (to check that cached properties are reset on dimensions change)
+        self.section.A
+        self.section._I0
+        self.section._I
+
+        # Change linear dimensions
         scale = 2.0
-        sec.set_dimensions(**self.scaled_dimensions(scale))
-        self.assertEqual(sec.A, scale**2 * self.A)
-        self.assertEqual(sec._I0, tuple(scale**4*i for i in self._I0))
-        self.assertEqual(sec._I, tuple(scale**4*i for i in self._I))
+        self.section.set_dimensions(**self.scaled_dimensions(scale))
+        
+        # Expected properties after change of dimensions
+        A   = self.A * scale**2
+        _I0 = tuple(scale**4*i for i in self._I0)
+        _I  = tuple(scale**4*i for i in self._I)
+        
+        self.assertAlmostEqual(self.section.A, A)
+        self.assertAlmostEqual(self.section._I0[0], _I0[0])
+        self.assertAlmostEqual(self.section._I0[1], _I0[1])
+        self.assertAlmostEqual(self.section._I0[2], _I0[2])
+        self.assertAlmostEqual(self.section._I[0], _I[0])
+        self.assertAlmostEqual(self.section._I[1], _I[1])
+        self.assertAlmostEqual(self.section._I[2], _I[2])
             
     
