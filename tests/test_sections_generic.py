@@ -109,9 +109,13 @@ class TestPhysicalProperties(object):
         
         # Properties in the local csys should not change
         # ----------------------------------------------
-        self.assertEqual(self.section.A,   self.A)
-        self.assertEqual(self.section._I0, self._I0)
-        self.assertEqual(self.section._I,  self._I)
+        self.assertAlmostEqual(self.section.A,   self.A)
+        self.assertAlmostEqual(self.section._I0[0], self._I0[0])
+        self.assertAlmostEqual(self.section._I0[1], self._I0[1])
+        self.assertAlmostEqual(self.section._I0[2], self._I0[2])
+        self.assertAlmostEqual(self.section._I[0],  self._I[0])
+        self.assertAlmostEqual(self.section._I[1],  self._I[1])
+        self.assertAlmostEqual(self.section._I[2],  self._I[2])
         
         # Properties in the global csys should change
         # -------------------------------------------
@@ -134,9 +138,13 @@ class TestPhysicalProperties(object):
 
         # Properties in the local csys should not change
         # ----------------------------------------------
-        self.assertEqual(self.section.A, self.A)
-        self.assertEqual(self.section._I0, self._I0)
-        self.assertEqual(self.section._I, self._I)
+        self.assertAlmostEqual(self.section.A, self.A)
+        self.assertAlmostEqual(self.section._I0[0], self._I0[0])
+        self.assertAlmostEqual(self.section._I0[1], self._I0[1])
+        self.assertAlmostEqual(self.section._I0[2], self._I0[2])
+        self.assertAlmostEqual(self.section._I[0],  self._I[0])
+        self.assertAlmostEqual(self.section._I[1],  self._I[1])
+        self.assertAlmostEqual(self.section._I[2],  self._I[2])
         
         # There is no rotation (theta=0) so I0 and _I0 should be equal
         # ------------------------------------------------------------
