@@ -247,3 +247,43 @@ class Circle(ComplexSection):
         self.sections[0].set_dimensions(ri=0, ro=self.r, phi=2*pi)
     
 
+
+class Box(ComplexSection):
+    dimensions = Dimensions(a=None, b=None, ta=None, tb=None)
+    sections = [Polygon]
+    
+    
+    def check_dimensions(self, dims):
+        if dims.a <= 0:
+            raise ValueError("Invalid dimensions: a <= 0")
+        if dims.b <= 0:
+            raise ValueError("Invalid dimensions: b <= 0")
+        if dims.ta <= 0:
+            raise ValueError("Invalid dimensions: ta <= 0")
+        if dims.tb <= 0:
+            raise ValueError("Invalid dimensions: tb <= 0")
+        if dims.a <= 2*dims.tb:
+            raise ValueError("Invalid dimensions: a <= 2*tb")
+        if dims.b <= 2*dims.ta:
+            raise ValueError("Invalid dimensions: b <= 2*ta")
+    
+    
+    def update_sections(self):
+        ao = 0.5 * self.a
+        ai = 0.5 * (self.a - 2*self.tb)
+        bo = 0.5 * self.b
+        bi = 0.5 * (self.b - 2*self.ta)
+        
+        polygon = self.sections[0]
+        polygon[:] = [
+            (-ao, -bo),
+            ( ao, -bo),
+            ( ao,  bo),
+            (-ao,  bo),
+            (-ao, -bi),
+            (-ai, -bi),
+            (-ai,  bi),
+            ( ai,  bi),
+            ( ai, -bi),
+            (-ao, -bi)]
+        
