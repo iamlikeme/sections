@@ -1,9 +1,10 @@
 import unittest
 from operator import concat, setitem, setslice
+import sys
 
+sys.path.insert(0, "..")
 from sections.sections import Polygon, Rectangle
-from tests.test_sections import SectionTests
-
+import test_sections_generic as generic
 
 
 class SubclassingFromList(unittest.TestCase):
@@ -67,7 +68,7 @@ class SubclassingFromList(unittest.TestCase):
 
 
 
-class PolygonTests1(unittest.TestCase):
+class TestImplementation(unittest.TestCase):
 
     def setUp(self):
         self.polygon = Polygon()
@@ -111,11 +112,12 @@ class PolygonTests1(unittest.TestCase):
         self.assertRaises(ValueError, setslice, self.polygon, 0, 1, [(1,1)])
 
 
-class PolygonTests2(unittest.TestCase, SectionTests):
+
+class TestPhysicalProperties(generic.TestPhysicalProperties, unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        cls.cls        = Polygon
+        cls.sectclass  = Polygon
         cls.dimensions = {}
         cls.vertices   = [(-1.0, -1.5), (1.0, -1.5), (1.0, 1.5), (-1.0, 1.5)]
 
@@ -129,24 +131,20 @@ class PolygonTests2(unittest.TestCase, SectionTests):
     
     
     def get_section(self, density=1.0):
-        """
-        A shortcut function to create a section with predefined dimensions."""
-        polygon = self.cls(density=density)
+        polygon = self.sectclass(density=density)
         polygon[:] = self.vertices
         return polygon
-
-
-    def test_dimensions(self):
-        sec = self.get_section()
-        # Evaluate properties
-        sec.A
-        sec._I0
-        sec._I
+    
+    
+    def scale_section_dimensions(self, factor, section=None):
+    	if section is None:
+    	    section = self.section
+    	section[:] = [(factor*x1, factor*x2) for x1, x2 in self.vertices]
+    
+    
+    def test_check_dimensions(self):
+        pass
         
-        # Check if properties change when dimensions are changed
-        scale = 2.0
-        sec[:] = [(scale*x1, scale*x2) for x1, x2 in self.vertices]
-        self.assertEqual(sec.A, scale**2 * self.A)
-        self.assertEqual(sec._I0, tuple(scale**4*i for i in self._I0))
-        self.assertEqual(sec._I, tuple(scale**4*i for i in self._I))
 
+if __name__ == "__main__":
+    unittest.main()

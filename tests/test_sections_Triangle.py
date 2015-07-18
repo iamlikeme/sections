@@ -1,11 +1,14 @@
 import unittest
 from operator import setslice
+import sys
 
+sys.path.insert(0, "..")
 from sections.sections import Triangle
-from tests.test_sections import SectionTests
+import test_sections_generic as generic
 
 
-class TriangleTests(unittest.TestCase):
+
+class ImplementationTests(unittest.TestCase):
     
     def setUp(self):
         self.triangle = Triangle()
@@ -41,11 +44,11 @@ class TriangleTests(unittest.TestCase):
 
 
 
-class TrianglePhysicalProperties(unittest.TestCase, SectionTests):
+class TestPhysicalProperties(generic.TestPhysicalProperties, unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        cls.cls        = Triangle
+        cls.sectclass  = Triangle
         cls.vertices   = [(0, 0), (6, 10), (12, 2)]
         cls.dimensions = {}
         cls.rp         = 10.0, 5.0
@@ -56,22 +59,20 @@ class TrianglePhysicalProperties(unittest.TestCase, SectionTests):
 
     
     def get_section(self, density=1.0):
-        triangle = self.cls(density=density)
+        triangle = self.sectclass(density=density)
         triangle[:] = self.vertices
         return triangle
 
 
-    def test_dimensions(self):
-        sec = self.get_section()
-        # Evaluate properties
-        sec.A
-        sec._I0
-        sec._I
-        
-        # Check if properties change when dimensions are changed
-        scale = 2.0
-        sec[:] = [(scale*x1, scale*x2) for x1, x2 in self.vertices]
-        self.assertEqual(sec.A, scale**2 * self.A)
-        self.assertEqual(sec._I0, tuple(scale**4*i for i in self._I0))
-        self.assertEqual(sec._I, tuple(scale**4*i for i in self._I))
+    def scale_section_dimensions(self, factor, section=None):
+    	if section is None:
+    	    section = self.section
+    	section[:] = [(factor*x1, factor*x2) for x1, x2 in self.vertices]
+    
+    
+    def test_check_dimensions(self):
+    	pass
 
+
+if __name__ == "__main__":
+    unittest.main()

@@ -3,7 +3,7 @@ import sys
 
 sys.path.insert(0, "..")
 from sections.sections import Box
-from test_sections import SectionTests
+import test_sections_generic as generic
 
 
 class TestDimensions(unittest.TestCase):
@@ -23,18 +23,21 @@ class TestDimensions(unittest.TestCase):
         self.assertRaises(ValueError, box.set_dimensions, b=20, ta=10)
 
 
-class TestPhysicalProperties(unittest.TestCase, SectionTests):
+class TestPhysicalProperties(generic.TestPhysicalProperties, unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        cls.cls        = Box
+        cls.sectclass  = Box
         cls.dimensions = dict(a=10, b=20, ta=2, tb=1)
         cls.rp         = 12.0, 15.0
         cls.A          = 72.0
         cls._I0        = 3936.0, 984.0, 0.0
         cls._I         = 3936.0, 984.0, 0.0
         cls._cog       = 0.0, 0.0
-        
+    
+    
+    def test_check_dimensions(self):
+        pass
 
 
 

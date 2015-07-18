@@ -1,25 +1,30 @@
 import unittest
+import sys
 
+sys.path.insert(0, "..")
 from sections.sections import Rectangle
-from tests.test_sections import SectionTests
+import test_sections_generic as generic
 
-class RectangleTests(unittest.TestCase, SectionTests):
+
+class TestPhysicalProperties(generic.TestPhysicalProperties, unittest.TestCase):
     
-    def setUp(self):
-        self.a          = 2.0
-        self.b          = 3.0
-        self.cls        = Rectangle
-        self.dimensions = {"a":self.a, "b":self.b}
-        self.rp         = 5.0, 4.0
-        self.A          = 6.0
-        self._I0        = 4.5, 2.0, 0.0
-        self._I         = self._I0
-        self._cog       = 0.0, 0.0
+    @classmethod
+    def setUpClass(cls):
+        cls.sectclass  = Rectangle
+        cls.dimensions = {"a":2.0, "b":3.0}
+        cls.rp         = 5.0, 4.0
+        cls.A          = 6.0
+        cls._I0        = 4.5, 2.0, 0.0
+        cls._I         = 4.5, 2.0, 0.0
+        cls._cog       = 0.0, 0.0
         
     
     def test_check_dimensions(self):
-    	rect = Rectangle(a=1, b=2)
-    	self.assertRaises(ValueError, rect.set_dimensions, a=-1)
-    	self.assertRaises(ValueError, rect.set_dimensions, b=-1)
-    	self.assertRaises(ValueError, rect.set_dimensions, a=0)
-    	self.assertRaises(ValueError, rect.set_dimensions, b=0)
+    	self.assertRaises(ValueError, self.section.set_dimensions, a=-1)
+    	self.assertRaises(ValueError, self.section.set_dimensions, b=-1)
+    	self.assertRaises(ValueError, self.section.set_dimensions, a=0)
+    	self.assertRaises(ValueError, self.section.set_dimensions, b=0)
+    	
+    	
+if __name__ == "__main__":
+    unittest.main()
