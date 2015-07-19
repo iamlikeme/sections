@@ -11,7 +11,7 @@ class TestPhysicalProperties(generic.TestPhysicalProperties, unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.sectclass  = Rectangle
-        cls.dimensions = {"a":2.0, "b":3.0}
+        cls.dimensions = dict(a=2.0, b=3.0)
         cls.rp         = 5.0, 4.0
         cls.A          = 6.0
         cls._I0        = 4.5, 2.0, 0.0

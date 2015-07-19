@@ -136,10 +136,8 @@ class TestPhysicalProperties(generic.TestPhysicalProperties, unittest.TestCase):
         return polygon
     
     
-    def scale_section_dimensions(self, factor, section=None):
-    	if section is None:
-    	    section = self.section
-    	section[:] = [(factor*x1, factor*x2) for x1, x2 in self.vertices]
+    def scale_section_dimensions(self, factor):
+    	self.section[:] = [(factor*x1, factor*x2) for x1, x2 in self.vertices]
     
     
     def test_check_dimensions(self):

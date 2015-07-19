@@ -13,6 +13,7 @@ class TestPhysicalProperties1(generic.TestPhysicalProperties, unittest.TestCase)
     def setUpClass(cls):
         cls.sectclass  = CircularSector
         cls.dimensions = dict(ro=5.0, ri=0.0, phi=pi/3)
+        cls.angular    = ["phi"]
         cls.rp         = 3.0, 4.0
         cls.A          = 13.08996938995747
         cls._I         = 14.154074016574924, 149.47054335789346, 0.0
@@ -20,14 +21,6 @@ class TestPhysicalProperties1(generic.TestPhysicalProperties, unittest.TestCase)
         cls._cog       = 3.183098861837906, 0.0
     
     
-    def scale_section_dimensions(self, factor, section=None):
-    	if section is None:
-    	    section = self.section
-    	dimensions = dict(ro=factor*self.dimensions["ro"],
-                          ri=factor*self.dimensions["ri"])
-        section.set_dimensions(**dimensions)
-    
-
     def test_check_dimensions(self):
     	self.assertRaises(ValueError, self.section.set_dimensions, ri=-1)
     	self.assertRaises(ValueError, self.section.set_dimensions, ro=-1)
@@ -45,6 +38,7 @@ class TestPhysicalProperties2(TestPhysicalProperties1):
     def setUpClass(cls):
         cls.sectclass  = CircularSector
         cls.dimensions = dict(ro=5.0, ri=3.0, phi=pi)
+        cls.angular    = ["phi"]
         cls.rp         = 5.0, 4.0
         cls._cog       = 2.599530737167624, 0.0
         cls.A          = 25.132741228718345
