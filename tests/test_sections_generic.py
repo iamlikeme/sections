@@ -3,31 +3,27 @@ from math import pi
 
 class TestPhysicalProperties(object):
     """
-    Defines tests that should be run for subclasses of SimpleSection and
+    Defines tests that should be run for each subclasses of SimpleSection and
     ComplexSection.
     """
     
-    @classmethod
-    def setUpClass(cls):
-    	"""
-    	Defines known values of physical properties that a section will
-    	be checked against. Provide values with at least 7 decimal digits
-    	accuracy (so they pass assertAlmostEqual)"""
+    sectclass  = NotImplemented  # Section class to be checked
+    dimensions = NotImplemented  # Dictionary of section dimensions
+    angular    = []              # List of strings containing names of angular dimensions
 
-        cls.sectclass = NotImplemented  # Section class to be checked
-        cls.dimensions = NotImplemented  # Dictionary of section dimensions
-
-        # The following physical properties should correspond to cls.dimensions
-        cls._cog = NotImplemented  # Position of the cog in local csys
-        cls.A    = NotImplemented  # Surface area
-        cls._I0  = NotImplemented  # Moments of inertia in local csys moved to cog
-        cls._I   = NotImplemented  # Moments of inertia in local csys
-        
-        # Position of the reference point (rp below) is used to test
-        # set_position method. Specify rp coordinates which are of the
-        # same order of magnitude as the linear dimensions of the section
-        rp       = NotImplemented
+    # Following are physical properties corresponding to the dimensions above.
+    # Section properties will be checked against these values. Provide values
+    # with at least 7 decimal digits accuracy (so they pass assertAlmostEqual)
+    _cog = NotImplemented  # Position of the cog in local csys
+    A    = NotImplemented  # Surface area
+    _I0  = NotImplemented  # Moments of inertia in local csys moved to cog
+    _I   = NotImplemented  # Moments of inertia in local csys
     
+    # Position of the reference point (rp below) is used to test
+    # set_position method. Specify rp coordinates which are of the
+    # same order of magnitude as the linear dimensions of the section
+    rp       = NotImplemented
+
     
     def setUp(self):
         self.section = self.get_section()
@@ -40,19 +36,12 @@ class TestPhysicalProperties(object):
         kwargs.update(self.dimensions)
         return self.sectclass(**kwargs)
     
+    
+    def scale_section_dimensions(self, scale):
+        dimensions = {k:scale*v for k,v in self.dimensions.items() if k not in self.angular}
+        self.section.set_dimensions(**dimensions)
+    
 
-    def scale_section_dimensions(self, factor, section=None):
-        """
-        Scales dimensions of section (self.section by default) by the
-        specified factor. Only linear dimensions should be scaled so
-        if section has angular dimensions this method should be overriden.
-        """
-        if section is None:
-            section = self.section
-        dimensions = {k:factor*v for k,v in self.dimensions.items()}
-        section.set_dimensions(**dimensions)
-    
-    
     def test_check_dimensions(self):
     	"""
     	To be implemented in subclass."""
