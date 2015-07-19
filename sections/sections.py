@@ -353,3 +353,52 @@ class Wedge(ComplexSection):
 
 class WedgeRing(CircularSector):
     pass
+
+
+class BaseFillet(ComplexSection):
+    sections   = [Triangle, CircularSegment]
+    dimensions = Dimensions(r=None, phi=None)
+    densities  = [1.0, -1.0]
+    
+    
+    def check_dimensions(self, dims):
+        if dims.r <= 0:
+            raise ValueError("Invalid dimensions: r <= 0")
+        if dims.phi <= 0:
+            raise ValueError("Invalid dimensions: phi <= 0")
+        if dims.phi == pi:
+            raise ValueError("Invalid dimensions: phi = pi")
+        if dims.phi >= 2*pi:
+            raise ValueError("Invalid dimensions: phi >= 2*pi")
+        
+    
+    def update_sections(self):
+        def sign(x):
+            return x / abs(x)
+        
+        alpha = self.phi/2
+        beta  = abs(pi - self.phi)
+        theta = pi * (self.phi < pi)
+        a = self.r * cos(alpha) / sin(alpha)
+        b = self.r * cos(alpha)**2 / sin(alpha) * sign(a)
+        c = self.r * cos(alpha)
+        d = self.r / sin(alpha) * sign(a)
+                
+        triangle = self.sections[0]
+        triangle[:] = [
+            (0,  0),
+            (b,  c),
+            (b, -c)]
+        
+        segment = self.sections[1]
+        segment.set_dimensions(r=self.r, phi=beta)
+        segment.set_position(d1=d, d2=0, theta=theta)
+        
+        if self.phi > pi:
+            self.densities = [-d for d in self.__class__.densities]
+        else:
+            self.densities = self.__class__.densities[:]
+        self.set_density(self.density)
+        
+        
+        
