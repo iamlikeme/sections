@@ -401,4 +401,25 @@ class BaseFillet(ComplexSection):
         self.set_density(self.density)
         
         
+class Fillet(ComplexSection):
+    sections   = [BaseFillet]
+    dimensions = Dimensions(r=None, phi0=None, phi1=None)
+    
+    
+    def check_dimensions(self, dims):
+        if dims.r <= 0:
+            raise ValueError("Invalid dimensions: r <= 0")
+        if dims.phi1 <= dims.phi0:
+            raise ValueError("Invalid dimensions: phi1 <= phi0")
+        if dims.phi1 - dims.phi0 >= 2*pi:
+            raise ValueError("Invalid dimensions: phi1 - phi0 >= 2*pi")
+    
+    
+    def update_sections(self):
+        phi = self.phi1 - self.phi0
+        theta = 0.5 * (self.phi0 + self.phi1)
+        self.sections[0].set_dimensions(r=self.r, phi=phi)
+        self.sections[0].set_position(d1=0, d2=0, theta=theta)
         
+        
+    
